@@ -14,7 +14,7 @@ def json_load():
 
     return activities_data, food_data, meal_data
 
-#   Converts 3 json files to double linked lists
+#   Converts 3 json files to hashmap
 def json_to_hashmap(activities_data, food_data, meal_data):
     ActivitiesHash = HashMap()
     for elem in activities_data:
