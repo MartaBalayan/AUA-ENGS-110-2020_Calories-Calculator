@@ -15,7 +15,7 @@ def json_load():
     return activities_data, food_data, meal_data
 
 #   Converts 3 json files to double linked lists
-#   Linked list for Activities
+#   Stack for Activities
 def json_to_activity_stack(activities_data):
     ActivitiesStack = Stack()
     for elem in activities_data:
@@ -23,7 +23,7 @@ def json_to_activity_stack(activities_data):
         ActivitiesStack.AddElement(temp)
     return ActivitiesStack
 
-#   Linked list for Food
+#   Stack for Food
 def json_to_food_stack(food_data):
     FoodStack = Stack()
     for elem in food_data:
@@ -31,7 +31,7 @@ def json_to_food_stack(food_data):
         FoodStack.AddElement(temp)
     return FoodStack
 
-#   Linked list for Meals
+#   Stack for Meals
 def json_to_meal_stack(meal_data):
     MealStack = Stack()
     for elem in meal_data:
