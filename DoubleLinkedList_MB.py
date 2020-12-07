@@ -77,7 +77,7 @@ class DoubleLinkedList:
             return
         prev.NextValue = HeadValue.NextValue
 
-        HeadValue = None
+        self.HeadValue = None
 
     def RemoveFirstElement(self):
         self.RemoveNode(self.First())

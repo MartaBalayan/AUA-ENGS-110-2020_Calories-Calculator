@@ -4,7 +4,7 @@ import json
 # =====================================================================================================
 def BurnedCalories():
     def DataOfWeightAndExercises():
-        with open("burned_data.json") as json_file:
+        with open('Data_Activities.json') as json_file:
             return json.load(json_file)
 
     def OptionsOfWeights(dict_):
@@ -12,7 +12,7 @@ def BurnedCalories():
             print(place, ") ", dict_["weight"][place - 1])
 
     def ChooseAnOption():
-        return int(input("PLease choose your weight number from the list above: ")) - 1
+        return int(input("Please choose your weight number from the list above: ")) - 1
 
     def AskForDoneExercise():
         exercises = input("Write what exercises have you done, separated by commas: ")
@@ -69,7 +69,7 @@ def BurnedCalories():
 # ====================================================================================================
 def ConsumedCalories():
     def DataOfMealsAndCalories():
-        with open("consumed_data.json") as json_file:
+        with open("Data_Food.json") as json_file:
             return json.load(json_file)
 
     def AskingForEatenFoods():
@@ -124,7 +124,7 @@ def ConsumedCalories():
 # =====================================================================================================
 def MealPlans():
     def DataOfMeals():
-        with open("meal_types.json") as json_file:
+        with open("Data_Meal_Types.json") as json_file:
             return json.load(json_file)
 
     def ChoseAMealType(dict_, key):
@@ -163,7 +163,10 @@ def CalculateBurnedOrConsumedCalories():
 
 def ExtraOptions():
     print(
-        "1) Calculate how much calories you burned?\n2) Calculate how much calories you consumed?\n3) Choose one of the meal types.\n4) Exit")
+        "1) Calculate how much calories you burned?\n"
+        "2) Calculate how much calories you consumed?\n"
+        "3) Choose one of the meal types.\n"
+        "4) Exit")
     chosen = input("Please choose one of the options by their number: ")
     while (chosen != "1" and chosen != "2" and chosen != "3" and chosen != "4"):
         print("There is no such option.")

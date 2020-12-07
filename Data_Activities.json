@@ -1,0 +1,21 @@
+{
+  "weight": ["Up to 56kg", "From 56kg up to 70kg", "More than 70kg"],
+  "walking": [215, 267, 319],
+  "baseball": [289, 359, 428],
+  "swimming": [397, 492, 587],
+  "tennis": [397, 492, 587],
+  "running": [624, 773, 923],
+  "bicycling": [454, 562, 671],
+  "football": [399, 494, 588],
+  "basketball": [340, 422, 503],
+  "volleyball": [346, 364, 390],
+  "yoga": [346, 364, 390],
+  "golfing": [370, 391, 420],
+  "downhill skiing": [370, 391, 420],
+  "low-impact aerobics": [420, 455, 500],
+  "weightlifting": [420, 455, 500],
+  "water aerobics": [480, 501, 530],
+  "hiking": [520, 546, 580],
+  "water skiing": [520, 546, 580],
+  "high-impact aerobics": [620, 664, 690]
+}
