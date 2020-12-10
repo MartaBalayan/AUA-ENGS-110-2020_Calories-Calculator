@@ -1,4 +1,6 @@
 import json
+import copy
+from collections import Counter
 from DoubleLinkedList_MB import *
 
 #   Loads json for 3 data files
@@ -73,24 +75,28 @@ def BurnedCalories(ActivitiesDLL):
     #   Get calories for exercises present in Activites data
     #   From done exercises get list of extra exercises
     def TakingExtraExercisesOut(ActivitiesDLL, done_exercise, weight_option):
+        tempDLL = copy.deepcopy(ActivitiesDLL)
         list_of_exercises = []
         list_of_calories = []
-        while ActivitiesDLL.HeadValue is not None:
+        while tempDLL.HeadValue is not None:
             for i in done_exercise:
-                if i == ActivitiesDLL.HeadValue.DataValue.name:
+                if i == tempDLL.HeadValue.DataValue.name:
                     list_of_exercises.append(i)
-                    list_of_calories.append(ActivitiesDLL.HeadValue.DataValue.value[weight_option])
-            ActivitiesDLL.HeadValue = ActivitiesDLL.HeadValue.NextValue
-        list_of_extras = set(done_exercise) - set(list_of_exercises)
+                    list_of_calories.append(tempDLL.HeadValue.DataValue.value[weight_option])
+            tempDLL.HeadValue = tempDLL.HeadValue.NextValue
+        #list_of_extras = set(done_exercise) - set(list_of_exercises)
+        list_of_extras = list((Counter(done_exercise) - Counter(list_of_exercises)).elements())
         return  list_of_extras, list_of_calories
 
     #   User inputs time he spent doing the exercises
     def AskForSpentTime(done_exercise, list_of_extras):
         time = input("Write times spent in each exercise separated by commas: ")
         time = time.split(",")
+        deleted = 0
         for exercise in list_of_extras:
             if exercise in done_exercise:
-                del time[done_exercise.index(exercise)]
+                del time[done_exercise.index(exercise)-deleted]
+                deleted += 1
         return time
 
     #   Calculating burned calories
@@ -137,24 +143,28 @@ def ConsumedCalories(FoodDLL):
     #   Get calories for food present in Food data
     #   From eaten food get list of extra food
     def TakingExtraFoodsOut(FoodDLL, foods):
+        tempDLL = copy.deepcopy(FoodDLL)
         list_of_food = []
         list_of_calories = []
-        while FoodDLL.HeadValue is not None:
+        while tempDLL.HeadValue is not None:
             for i in foods:
-                if i == FoodDLL.HeadValue.DataValue.name:
+                if i == tempDLL.HeadValue.DataValue.name:
                     list_of_food.append(i)
-                    list_of_calories.append(FoodDLL.HeadValue.DataValue.value)
-            FoodDLL.HeadValue = FoodDLL.HeadValue.NextValue
-        list_of_extras = set(foods) - set(list_of_food)
+                    list_of_calories.append(tempDLL.HeadValue.DataValue.value)
+            tempDLL.HeadValue = tempDLL.HeadValue.NextValue
+        #list_of_extras = set(foods) - set(list_of_food)
+        list_of_extras = list((Counter(foods) - Counter(list_of_food)).elements())
         return list_of_extras, list_of_calories
 
     #   User inputs amount of eaten food
     def AskingForAmountsOfEatenFoods(foods, list_of_extras):
         amount = input("Amount of each food, separated by commas: ")
         amount = amount.split(",")
+        deleted = 0
         for food in list_of_extras:
             if food in foods:
-                del amount[foods.index(food)]
+                del amount[foods.index(food)-deleted]
+                deleted += 1
         return amount
 
     #   Calculating consumed calories
@@ -199,13 +209,14 @@ def MealPlans(MealDLL):
 
     #   Print the chosen meal
     def PrintAndSaveTheScheduleOfMeal(MealDLL, question):
+        tempDLL = copy.deepcopy(MealDLL)
         print("Your plan!!!\n")
         meal = ""
 
-        MealDLL.HeadValue = MealDLL.HeadValue.NextValue
-        while MealDLL.HeadValue is not None:
-            meal = meal + MealDLL.HeadValue.DataValue.name + ": \n" + MealDLL.HeadValue.DataValue.value[question] + "\n"
-            MealDLL.HeadValue = MealDLL.HeadValue.NextValue
+        tempDLL.HeadValue = tempDLL.HeadValue.NextValue
+        while tempDLL.HeadValue is not None:
+            meal = meal + tempDLL.HeadValue.DataValue.name + ": \n" + tempDLL.HeadValue.DataValue.value[question] + "\n"
+            tempDLL.HeadValue = tempDLL.HeadValue.NextValue
 
         with open("meal_result.txt", "a") as m:
             m.write(meal)
@@ -252,9 +263,6 @@ def main():
         ConsumedCalories(FoodDLL)
 
     while True:
-        ActivitiesDLL = json_to_activites_linked_list(activities_data)
-        FoodDLL = json_to_food_linked_list(food_data)
-        MealDLL = json_to_meal_linked_list(meal_data)
         next_question = ExtraOptions()
         if next_question == "1":
             BurnedCalories(ActivitiesDLL)

@@ -1,4 +1,5 @@
 import json
+from collections import Counter 
 from HashMap_MB import *
 
 #   Loads json for 3 data files
@@ -14,7 +15,7 @@ def json_load():
 
     return activities_data, food_data, meal_data
 
-#   Converts 3 json files to hashmap
+#   Converts 3 json files to double linked lists
 def json_to_hashmap(activities_data, food_data, meal_data):
     ActivitiesHash = HashMap()
     for elem in activities_data:
@@ -75,16 +76,19 @@ def BurnedCalories(ActivitiesHash):
             if ActivitiesHash.get(i) is not None:
                 list_of_exercises.append(i)
                 list_of_calories.append(ActivitiesHash.get(i)[weight_option])
-        list_of_extras = set(done_exercise) - set(list_of_exercises)
+        #list_of_extras = set(done_exercise) - set(list_of_exercises)
+        list_of_extras = list((Counter(done_exercise) - Counter(list_of_exercises)).elements())
         return  list_of_extras, list_of_calories
 
     #   User inputs time he spent doing the exercises
     def AskForSpentTime(done_exercise, list_of_extras):
         time = input("Write times spent in each exercise separated by commas: ")
         time = time.split(",")
+        deleted = 0
         for exercise in list_of_extras:
             if exercise in done_exercise:
-                del time[done_exercise.index(exercise)]
+                del time[done_exercise.index(exercise)-deleted]
+                deleted += 1
         return time
 
     #   Calculating burned calories
@@ -133,16 +137,19 @@ def ConsumedCalories(FoodHash):
             if FoodHash.get(i) is not None:
                 list_of_food.append(i)
                 list_of_calories.append(FoodHash.get(i))
-        list_of_extras = set(foods) - set(list_of_food)
+        #list_of_extras = set(foods) - set(list_of_food)
+        list_of_extras = list((Counter(foods) - Counter(list_of_food)).elements())
         return list_of_extras, list_of_calories
 
     #   User inputs amount of eaten food
     def AskingForAmountsOfEatenFoods(foods, list_of_extras):
         amount = input("Amount of each food, separated by commas: ")
         amount = amount.split(",")
+        deleted = 0
         for food in list_of_extras:
             if food in foods:
-                del amount[foods.index(food)]
+                del amount[foods.index(food)-deleted]
+                deleted += 1
         return amount
 
     #   Calculating consumed calories
@@ -241,7 +248,6 @@ def main():
         ConsumedCalories(FoodHash)
 
     while True:
-        ActivitiesHash, FoodHash, MealHash = json_to_hashmap(activities_data, food_data, meal_data)
         next_question = ExtraOptions()
         if next_question == "1":
             BurnedCalories(ActivitiesHash)

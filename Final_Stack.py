@@ -1,4 +1,6 @@
 import json
+import copy
+from collections import Counter 
 from Stack_MB import *
 
 #   Loads json for 3 data files
@@ -14,8 +16,8 @@ def json_load():
 
     return activities_data, food_data, meal_data
 
-#   Converts 3 json files to stack
-#   Stack for Activities
+#   Converts 3 json files to double linked lists
+#   Linked list for Activities
 def json_to_activity_stack(activities_data):
     ActivitiesStack = Stack()
     for elem in activities_data:
@@ -23,7 +25,7 @@ def json_to_activity_stack(activities_data):
         ActivitiesStack.AddElement(temp)
     return ActivitiesStack
 
-#   Stack for Food
+#   Linked list for Food
 def json_to_food_stack(food_data):
     FoodStack = Stack()
     for elem in food_data:
@@ -31,7 +33,7 @@ def json_to_food_stack(food_data):
         FoodStack.AddElement(temp)
     return FoodStack
 
-#   Stack for Meals
+#   Linked list for Meals
 def json_to_meal_stack(meal_data):
     MealStack = Stack()
     for elem in meal_data:
@@ -60,11 +62,12 @@ class Meal:
 #   Calculation of burned calories
 def BurnedCalories(ActivitiesStack, activities_data):
     #   Prints options of weight categories
+    tempStack = copy.deepcopy(ActivitiesStack)
     def OptionsOfWeights(ActivitiesStack):
-        while ActivitiesStack.StackIsEmpty() is False:
-            if ActivitiesStack.StackSize() == 1:
-                options = ActivitiesStack.TopElement().value
-            ActivitiesStack.RemoveElement()
+        while tempStack.StackIsEmpty() is False:
+            if tempStack.StackSize() == 1:
+                options = tempStack.TopElement().value
+            tempStack.RemoveElement()
         for place in range(1, len(options) + 1):
             print(place, ") ", options[place - 1])
 
@@ -81,24 +84,28 @@ def BurnedCalories(ActivitiesStack, activities_data):
     #   Get calories for exercises present in Activites data
     #   From done exercises get list of extra exercises
     def TakingExtraExercisesOut(ActivitiesStack, done_exercise, weight_option):
+        tempStack = copy.deepcopy(ActivitiesStack)
         list_of_exercises = []
         list_of_calories = []
-        while ActivitiesStack.StackIsEmpty() is False:
+        while tempStack.StackIsEmpty() is False:
             for i in done_exercise:
-                if i == ActivitiesStack.TopElement().name:
+                if i == tempStack.TopElement().name:
                     list_of_exercises.append(i)
-                    list_of_calories.append(ActivitiesStack.TopElement().value[weight_option])
-            ActivitiesStack.RemoveElement()
-        list_of_extras = set(done_exercise) - set(list_of_exercises)
+                    list_of_calories.append(tempStack.TopElement().value[weight_option])
+            tempStack.RemoveElement()
+        #list_of_extras = set(done_exercise) - set(list_of_exercises)
+        list_of_extras = list((Counter(done_exercise) - Counter(list_of_exercises)).elements())
         return  list_of_extras, list_of_calories
 
     #   User inputs time he spent doing the exercises
     def AskForSpentTime(done_exercise, list_of_extras):
         time = input("Write times spent in each exercise separated by commas: ")
         time = time.split(",")
+        deleted = 0
         for exercise in list_of_extras:
             if exercise in done_exercise:
-                del time[done_exercise.index(exercise)]
+                del time[done_exercise.index(exercise)-deleted]
+                deleted += 1
         return time
 
     #   Calculating burned calories
@@ -125,7 +132,6 @@ def BurnedCalories(ActivitiesStack, activities_data):
     #   Execution of burned calories calculation
     def burned(ActivitiesStack):
         OptionsOfWeights(ActivitiesStack)
-        ActivitiesStack = json_to_activity_stack(activities_data)
         weight_option = ChooseAnOption()
         done_exercise = AskForDoneExercise()
         list_of_extras, list_of_calories = TakingExtraExercisesOut(ActivitiesStack, done_exercise, weight_option)
@@ -146,24 +152,28 @@ def ConsumedCalories(FoodStack):
     #   Get calories for food present in Food data
     #   From eaten food get list of extra food
     def TakingExtraFoodsOut(FoodStack, foods):
+        tempStack = copy.deepcopy(FoodStack)
         list_of_food = []
         list_of_calories = []
-        while FoodStack.StackIsEmpty() is False:
+        while tempStack.StackIsEmpty() is False:
             for i in foods:
-                if i == FoodStack.TopElement().name:
+                if i == tempStack.TopElement().name:
                     list_of_food.append(i)
-                    list_of_calories.append(FoodStack.TopElement().value)
-            FoodStack.RemoveElement()
-        list_of_extras = set(foods) - set(list_of_food)
+                    list_of_calories.append(tempStack.TopElement().value)
+            tempStack.RemoveElement()
+        #list_of_extras = set(foods) - set(list_of_food)
+        list_of_extras = list((Counter(foods) - Counter(list_of_food)).elements())
         return list_of_extras, list_of_calories
 
     #   User inputs amount of eaten food
     def AskingForAmountsOfEatenFoods(foods, list_of_extras):
         amount = input("Amount of each food, separated by commas: ")
         amount = amount.split(",")
+        deleted = 0
         for food in list_of_extras:
             if food in foods:
-                del amount[foods.index(food)]
+                del amount[foods.index(food)-deleted]
+                deleted += 1
         return amount
 
     #   Calculating consumed calories
@@ -201,10 +211,11 @@ def ConsumedCalories(FoodStack):
 def MealPlans(MealStack, meal_data):
     #   User chooses meal category
     def ChoseAMealType(MealStack):
-        while MealStack.StackIsEmpty() is False:
-            if MealStack.StackSize() == 1:
-                options = MealStack.TopElement().value
-            MealStack.RemoveElement()
+        tempStack = copy.deepcopy(MealStack)
+        while tempStack.StackIsEmpty() is False:
+            if tempStack.StackSize() == 1:
+                options = tempStack.TopElement().value
+            tempStack.RemoveElement()
         for place in range(1, len(options) + 1):
             print(place, ") ", options[place - 1])
         question = int(input("Please choose one of the meal plans by its number: "))
@@ -212,12 +223,13 @@ def MealPlans(MealStack, meal_data):
 
     #   Print the chosen meal
     def PrintAndSaveTheScheduleOfMeal(MealStack, question):
+        tempStack = copy.deepcopy(MealStack)
         print("Your plan!!!\n")
         meal = ""
 
-        while MealStack.StackSize() > 1:
-            meal = meal + MealStack.TopElement().name + ": \n" + MealStack.TopElement().value[question] + "\n"
-            MealStack.RemoveElement()
+        while tempStack.StackSize() > 1:
+            meal = meal + tempStack.TopElement().name + ": \n" + tempStack.TopElement().value[question] + "\n"
+            tempStack.RemoveElement()
 
         with open("meal_result.txt", "a") as m:
             m.write(meal)
@@ -226,7 +238,6 @@ def MealPlans(MealStack, meal_data):
     #   Execution of meal type choice
     def meals(MealStack, meal_data):
         question = ChoseAMealType(MealStack)
-        MealStack = json_to_meal_stack(meal_data)
         PrintAndSaveTheScheduleOfMeal(MealStack, question)
 
     meals(MealStack, meal_data)
@@ -265,9 +276,6 @@ def main():
         ConsumedCalories(FoodStack)
 
     while True:
-        ActivitiesStack = json_to_activity_stack(activities_data)
-        FoodStack = json_to_food_stack(food_data)
-        MealStack = json_to_meal_stack(meal_data)
         next_question = ExtraOptions()
         if next_question == "1":
             BurnedCalories(ActivitiesStack, activities_data)
